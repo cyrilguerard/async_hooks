@@ -6,7 +6,6 @@
     "build": "rimraf ./dist && tsc",
     "clean": "rimraf ./dist",
     "start": "npx nodemon",
-    "start:ts": "ts-node src/index.ts",
     "start:prod": "npm run build && node dist/index.js"
   },
   "keywords": [],

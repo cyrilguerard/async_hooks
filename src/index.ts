@@ -21,7 +21,7 @@ type TaskStats = {
     duration: number;
     startId: number;
     endId: number;
-    slows: TaskInfo[];
+    blockingTasks: TaskInfo[];
 }
 
 type RequestStore = {
@@ -64,9 +64,6 @@ app.get('/', function (req, res, next) {
 });
 app.get('/slow', function (req, res, next) {
     sleep(10000).then(() => res.send('OK'));
-});
-app.get('/test', function (req, res, next) {
-    slowRequest().then((data) => res.send(data));
 });
 app.listen(3000);
 
@@ -114,7 +111,7 @@ function computeStats(taskMap: Map<number, TaskInfo>, start: number, end: number
         stats.duration += t.eventLoopTime;
         stats.ratio = stats.duration / stats.requestDuration;
         if (t.eventLoopTime > 100) {
-            stats.slows.push(t);
+            stats.blockingTasks.push(t);
         }
         return stats;
     }, {
@@ -125,9 +122,9 @@ function computeStats(taskMap: Map<number, TaskInfo>, start: number, end: number
         max: 0,
         duration: 0,
         ratio: 1,
-        slows: [],
+        blockingTasks: [],
     } as TaskStats);
-    stats.slows.sort((a, b) => b.eventLoopTime - a.eventLoopTime);
+    stats.blockingTasks.sort((a, b) => b.eventLoopTime - a.eventLoopTime);
     return stats;
 }
 
